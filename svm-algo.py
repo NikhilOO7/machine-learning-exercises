@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 
-from matplotlib import 
+from matplotlib import style
 
 import numpy as np
 
@@ -12,7 +12,7 @@ class Support_Vector_Machine:
 	def __init__(self, visualization = True):
 
 		self.visualization = visualization
-		self.color = {1 : 'r' , -1 : 'b'}
+		self.colors = {1 : 'r' , -1 : 'b'}
 
 		if self.visualization:
 
@@ -68,7 +68,7 @@ class Support_Vector_Machine:
 
 			while not optimized:
 
-				for b in np.arange(-1(self.max_feature_value * b_range_multiple), 
+				for b in np.arange(-1 * (self.max_feature_value * b_range_multiple), 
 									self.max_feature_value * b_range_multiple, 
 									step * b_multiple):
 					for transformation in transforms:
@@ -85,9 +85,9 @@ class Support_Vector_Machine:
 							for xi in self.data[i]:
 
 								yi = 1
-								ig not yi * (np.dot(w_t, xi) + b) >= 1:
+								if not yi * (np.dot(w_t, xi) + b) >= 1:
 
-								found_option = False
+									found_option = False
 
 						if found_option:
 
@@ -121,7 +121,7 @@ class Support_Vector_Machine:
 		classification = np.sign(np.dot(np.array(features), self.w) + self.b)
 
 		if classification != 0 and self.visualization:
-			self.ax.scatter(features[0], features[1], s = 200, marker = *, c = self.colors[classification])
+			self.ax.scatter(features[0], features[1], s = 200, marker = '*', c = self.colors[classification])
 		return classification
 
 	def visualize(self):
@@ -130,22 +130,60 @@ class Support_Vector_Machine:
 		# hyperplane = x. w+b
 		def hyperplane(x, w, b ,v):
 
-			return (-w[0] * x - b + v)
-			
- 
+			return (-w[0] * x - b + v) / w[1]
 
+		data_range = (self.min_feature_value * 0.9, self.max_feature_value * 1.1)
+
+		hyp_x_min = data_range[0]
+
+		hyp_x_max = data_range[1]
+
+		# positive support vector 
+
+		psv1 = hyperplane(hyp_x_min, self.w, self.b, 1)
+		psv2 = hyperplane(hyp_x_max, self.w, self.b, 1)
+
+		self.ax.plot([hyp_x_min, hyp_x_max], [psv1, psv2])		
+
+		# negative support vector 
+
+		nsv1 = hyperplane(hyp_x_min, self.w, self.b, -1)
+		nsv2 = hyperplane(hyp_x_max, self.w, self.b, -1)
+
+		self.ax.plot([hyp_x_min, hyp_x_max], [nsv1, nsv2])		
+
+		# support vector on decision boundary 
+
+		db1 = hyperplane(hyp_x_min, self.w, self.b, 0)
+		db2 = hyperplane(hyp_x_max, self.w, self.b, 0)
+
+		self.ax.plot([hyp_x_min, hyp_x_max], [db1, db2])		
+ 
+		plt.show()
 
 data_dict = {
 
-	-1 : np.array([
-		[1, 7],
-		[2, 8],
-		[3, 8],
-	]),
+	-1 : np.array([[1, 7],[2, 8],[3, 8],]),
 
-	1 : np.array([
-		[5, 1],
-		[6, -1],
-		[7, 3],
-	])
+	1 : np.array([[5, 1],[6, -1],[7, 3],])
 }
+
+
+svm = Support_Vector_Machine()
+
+svm.fit(data = data_dict)
+
+svm.visualize()
+
+
+
+
+
+
+
+
+
+
+
+
+
